@@ -24,7 +24,7 @@ jobs:
 
       - name: integrity checks
         run: |
-          echo "9bfd7293012822bf1911c28bedbd10a48b4507bec5ca88e85ea41aa3fcdc793c group_vars/mongodb/vars" | sha256sum -c
+          echo "eb63ad649182285921dd04742a8e6b495f19a3fb7a04a9c126be559fbf0fe238 group_vars/mongodb/vars" | sha256sum -c
           
       - name: install dependencies
         run: |

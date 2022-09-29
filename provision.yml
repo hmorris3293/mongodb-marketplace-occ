@@ -19,7 +19,7 @@
       root_pass: '{{ root_pass }}'
       authorized_keys: '{{ ssh_keys }}'
       private_ip: true
-      tags: '{{ tags }}'
+      tags: '{{ linode_tags }}'
       state: present
     register: linode
     with_sequence: count='{{count}}'

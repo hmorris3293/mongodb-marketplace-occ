@@ -6,7 +6,7 @@ cluster_name:
 type: 
 region: 
 image:
-tags:
+linode_tags:
 # ssl/tls vars
 country_name:
 state_or_province_name:
