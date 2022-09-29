@@ -79,7 +79,7 @@ function ansible:build {
   type: ${LINODE_PARAMS[0]}
   region: ${LINODE_PARAMS[1]}
   image: ${LINODE_PARAMS[2]}
-  tags: ${TAGS}
+  linode_tags: ${TAGS}
   # ssl/tls vars
   country_name: ${COUNTRY_NAME}
   state_or_province_name: ${STATE_OR_PROVINCE}
@@ -110,7 +110,7 @@ function test:build {
   type: g6-standard-2
   region: us-southeast
   image: linode/debian11
-  tags: occ_test
+  linode_tags: occ_test
 
   # ssl/tls vars
   country_name: US
