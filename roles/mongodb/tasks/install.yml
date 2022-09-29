@@ -1,0 +1,47 @@
+---
+# roles/mongodb/tasks/install.yml
+
+# general tasks
+- name: set mongo1 hostname
+  hostname:
+    name: "{{ mongo1_hostname }}"
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+- name: set mongo2 hostname
+  hostname:
+    name: "{{ mongo2_hostname }}"
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][1] }}"
+
+- name: set mongo3 hostname
+  hostname:
+    name: "{{ mongo3_hostname }}"
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][2] }}"
+
+- name: update /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} Mongodb servers"
+    block: |
+      {{ mongo1_priv1 }} {{ mongo1_hostname }} mongo1
+      {{ mongo2_priv1 }} {{ mongo2_hostname }} mongo2
+      {{ mongo3_priv1 }} {{ mongo3_hostname }} mongo3
+ 
+- name: adding mongodb repository
+  shell: echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/5.0 main" > /etc/apt/sources.list.d/mongodb-org-5.0.list 
+
+- name: importing signing key
+  apt_key:
+    url: https://www.mongodb.org/static/pgp/server-5.0.asc 
+    state: present
+
+- name: updating repos
+  apt:
+    update_cache: yes
+
+- name: installing mongodb
+  apt:
+    name: mongodb-org
+    state: present

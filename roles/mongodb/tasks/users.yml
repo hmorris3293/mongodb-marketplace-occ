@@ -1,0 +1,36 @@
+---
+# roles/mongodb/tasks/users.yml
+
+- name: starting mongod on mongo1
+  service:
+    name: mongod
+    state: started
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+- name: creating mongo admin user
+  community.mongodb.mongodb_user:
+    database: admin
+    name: mongo-admin
+    password: "{{ mongo_admin_pass }}"
+    roles: userAdminAnyDatabase
+    state: present
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+- name: creating mongo root user
+  community.mongodb.mongodb_user:
+    database: admin
+    name: mongo-root
+    password: "{{ mongo_root_pass }}"
+    roles: root 
+    state: present
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+ 
+- name: stopping mongod on mongo1
+  service:
+    name: mongod
+    state: stopped
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"

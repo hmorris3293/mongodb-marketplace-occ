@@ -1,0 +1,20 @@
+---
+# roles/mongodb_cluster/tasks/main.yml
+
+- name: install firewalld
+  import_tasks: firewalld.yml
+
+- name: install mongodb 5.0
+  import_tasks: install.yml
+
+- name: create mongodb admin/root users
+  import_tasks: users.yml
+
+- name: creating tls certificates for replica set
+  import_tasks: ssl.yml
+
+- name: configure mongodb
+  import_tasks: mongod.yml
+
+- name: configure replica set
+  import_tasks: rs.yml

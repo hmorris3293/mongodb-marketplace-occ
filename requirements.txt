@@ -1,0 +1,11 @@
+wheel
+linode_api4
+ansible
+passlib==1.7.4
+polling==0.3.2
+yamllint==1.26.2
+flake8==3.9.2
+ansible-lint==6.1.0
+molecule==3.6.1
+molecule-vagrant==1.0.0
+python-vagrant==1.0.0

@@ -1,0 +1,50 @@
+---
+# roles/mongodb/tasks/rs.yml
+
+# initiate rs
+
+- name: wait for port 27017 to become open
+  wait_for:
+    port: 27017
+    host: 'localhost'
+    delay: 10
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+- name: initiating replica rs0
+  community.mongodb.mongodb_shell:
+    login_host: localhost
+    login_user: mongo-root
+    login_password: "{{ mongo_root_pass }}"
+    login_database: admin
+    eval: 'rs.initiate({ _id: "rs0", version: 1, members: [{ _id: 0, host : "{{ mongo1_hostname  }}:27017" }, { _id: 1, host : "{{ mongo2_hostname }}:27017" },{ _id: 2, host : "{{ mongo3_hostname }}:27017" }]})'
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+- name: waiting for replicaset to stabilize
+  community.mongodb.mongodb_status:
+    replica_set: rs0
+    poll: 5
+    interval: 10
+    validate: minimal
+    login_host: localhost
+    login_user: mongo-root
+    login_password: "{{ mongo_root_pass }}"
+    login_database: admin
+    strict_compatibility: no
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+      
+- name: ensuring replicaset rs0 exist
+  community.mongodb.mongodb_replicaset:
+    login_host: localhost
+    login_user: mongo-root
+    login_password: "{{ mongo_root_pass }}"
+    login_database: admin
+    replica_set: rs0
+    members:
+    - host: "{{ mongo1_hostname  }}:27017"
+    - host: "{{ mongo2_hostname }}:27017"
+    - host: "{{ mongo3_hostname }}:27017"
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"

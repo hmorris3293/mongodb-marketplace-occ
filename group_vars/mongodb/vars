@@ -1,0 +1,19 @@
+# Linode vars
+
+ssh_keys:
+instance_prefix: 
+cluster_name: 
+type: 
+region: 
+image:
+tags:
+# ssl/tls vars
+country_name:
+state_or_province_name:
+locality_name:
+organization_name:
+email_address:
+ca_common_name:
+common_name:
+# sudo user
+sudo_username:

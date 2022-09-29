@@ -1,0 +1,87 @@
+---
+# roles/mongodb/tasks/firewalld.yml
+
+- name: installing firewalld
+  apt:
+    name: firewalld
+    state: present
+
+- name: updating firewalld.conf file
+  lineinfile:
+    path: /etc/firewalld/firewalld.conf
+    regexp: '^IndividualCalls=no'
+    line: IndividualCalls=yes
+
+- name: restarting firewalld on servers
+  service:
+    name: firewalld
+    state: restarted
+
+# mongodb 1
+
+- name: set fact for firewalld for mongo1
+  set_fact:
+    annotation_1: "{{ mongo2_hostname }}"
+    annotation_2: "{{ mongo3_hostname }}"
+    mongodb2: "{{ mongo2_priv1 }}"
+    mongodb3: "{{ mongo3_priv1 }}"
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+- name: installing internal.xml for mongo1
+  template:
+    src: internal.xml.j2
+    dest: /etc/firewalld/zones/internal.xml
+  run_once: true  
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+- name: reloading firewalld on mongo1
+  shell: firewall-cmd --reload
+  run_once: true  
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+# mongodb 2
+
+- name: set facts for firewalld for mongo2
+  set_fact:
+    annotation_1: "{{ mongo1_hostname }}"
+    annotation_2: "{{ mongo3_hostname }}"
+    mongodb2: "{{ mongo1_priv1 }}"
+    mongodb3: "{{ mongo3_priv1 }}"
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][1] }}"  
+
+- name: installing internal.xml for mongo2
+  template:
+    src: internal.xml.j2
+    dest: /etc/firewalld/zones/internal.xml
+  run_once: true  
+  delegate_to: "{{ groups['mongodb'][1] }}"
+
+- name: reloading firewalld on mongo2
+  shell: firewall-cmd --reload
+  run_once: true  
+  delegate_to: "{{ groups['mongodb'][1] }}"
+
+# mongodb 3
+
+- name: set facts for firewalld for mongo3
+  set_fact:
+    annotation_1: "{{ mongo1_hostname }}"
+    annotation_2: "{{ mongo2_hostname }}"
+    mongodb2: "{{ mongo1_priv1 }}"
+    mongodb3: "{{ mongo2_priv1 }}"
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][2] }}"  
+
+- name: installing internal.xml for mongo3
+  template:
+    src: internal.xml.j2
+    dest: /etc/firewalld/zones/internal.xml
+  run_once: true  
+  delegate_to: "{{ groups['mongodb'][2] }}"
+
+- name: reloading firewalld on mongo3
+  shell: firewall-cmd --reload
+  run_once: true  
+  delegate_to: "{{ groups['mongodb'][2] }}"

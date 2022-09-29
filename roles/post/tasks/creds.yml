@@ -1,0 +1,21 @@
+---
+# roles/post/tasks/creds.yml
+
+- name: writing deployment credentials locally
+  blockinfile:
+    path: /root/.deployment-secrets.yml
+    create: yes
+    block: |
+      # mongodb users
+      
+      user: mongo-admin
+      password: {{ mongo_admin_pass }}
+
+      user: mongo-root
+      password: {{ mongo_root_pass }}
+
+      user: {{ sudo_username }}
+      password: {{ sudo_username_pass }}
+
+      # SSL ca password
+      {{ ca_password }}

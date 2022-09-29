@@ -1,0 +1,4 @@
+collections:
+  - community.mongodb
+  - community.crypto  
+  - linode.cloud

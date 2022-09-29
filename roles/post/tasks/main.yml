@@ -1,0 +1,11 @@
+---
+# roles/post/tasks/main.yml
+
+- name: adding sudo user
+  import_tasks: sudouser.yml
+
+- name: add user ssh keys
+  import_tasks: sshkeys.yml
+
+- name: dumpimg credentials locally
+  import_tasks: creds.yml

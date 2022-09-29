@@ -1,0 +1,17 @@
+# linode Mongodb ansible playbook
+
+# linodes
+- name: configure Mongodb linodes
+  hosts: mongodb
+  any_errors_fatal: true
+  user: root
+  vars:
+    local_home: "{{ lookup('env','HOME') }}"
+  vars_files:
+    - group_vars/mongodb/vars
+    - group_vars/mongodb/secret_vars
+  
+  roles:
+    - common      
+    - mongodb
+    - post

@@ -1,0 +1,32 @@
+---
+# group_vars/mongodb/vars
+
+# Linode vars
+ssh_keys: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI test@linode.com
+
+# Deployment vars
+cluster_name: linode.com
+instance_prefix: mongodb
+
+# ssl
+country_name: US
+state_or_province_name: Pennsylvania
+locality_name: Philadelphia
+organization_name: Linode
+email_address: test@linode.com
+ca_common_name: MongoDB CA
+common_name: linode.com
+
+# hostnames 
+mongo1_hostname: mongo1.linode.com 
+mongo2_hostname: mongo2.linode.com
+mongo3_hostname: mongo3.linode.com
+
+# private ips
+mongo1_priv1: 192.168.56.1
+mongo2_priv1: 192.168.56.2
+mongo3_priv1: 192.168.56.3
+
+#test passwords
+mongo_root_pass: moleculetestpass123
+mongo_admin_pass: moleculetestpass123

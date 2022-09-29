@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: mongodb
+  become: true
+  vars_files:
+    - ../../vars.yml
+  tasks:
+    - name: inlcude common
+      include_role:
+        name: common
+    - name: include db
+      include_role:
+        name: mongodb 

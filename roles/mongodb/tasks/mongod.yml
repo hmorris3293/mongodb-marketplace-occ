@@ -1,0 +1,73 @@
+---
+# roles/mongodb/tasks/mongod.yml
+
+# configuration updates
+
+#mongo1
+
+- name: creating mongo config backup
+  copy:
+    src: /etc/mongod.conf
+    dest: /etc/mongod.conf.bak
+    remote_src: yes
+    owner: mongodb
+    group: mongodb
+    mode: '0644'
+
+- name: set fact for mongo1
+  set_fact:
+    private_ip: "{{ mongo1_priv1 }}" 
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+ 
+- name: updating mongod.conf on mongo1
+  template:
+    src: mongod.conf.j2
+    dest: "/etc/mongod.conf"
+    owner: mongodb
+    group: mongodb
+    mode: '0644'
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+# mongo2
+
+- name: set fact for mongo2
+  set_fact:
+    private_ip: "{{ mongo2_priv1 }}" 
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][1] }}"
+ 
+- name: updating mongod.conf on mongo2
+  template:
+    src: mongod.conf.j2
+    dest: "/etc/mongod.conf"
+    owner: mongodb
+    group: mongodb
+    mode: '0644'
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][1] }}"
+
+#mongo3
+
+- name: set fact for mongo3
+  set_fact:
+    private_ip: "{{ mongo3_priv1 }}" 
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][2] }}"
+ 
+- name: updating mongod.conf on mongo3
+  template:
+    src: mongod.conf.j2
+    dest: "/etc/mongod.conf"
+    owner: mongodb
+    group: mongodb
+    mode: '0644'
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][2] }}"
+
+- name: starting mongod in cluster
+  service:
+    name: mongod
+    state: started
+    enabled: yes

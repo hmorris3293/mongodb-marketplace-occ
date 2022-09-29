@@ -1,0 +1,58 @@
+---
+- name: Verify
+  hosts: mongodb
+  gather_facts: false
+  user: root
+  vars_files:
+    - group_vars/mongodb/vars
+    - group_vars/mongodb/secret_vars
+    
+  tasks:
+
+    - name: insert into test collection
+      community.mongodb.mongodb_shell:
+        login_host: localhost
+        login_user: mongo-root
+        login_password: "{{ mongo_root_pass }}"
+        login_database: admin
+        db: linode
+        eval: 'db.replication.insert({"status":"ok"})'
+      run_once: true
+      delegate_to: "{{ groups['mongodb'][0] }}"
+
+    - name: validate replication on secondaries
+      community.mongodb.mongodb_shell:
+        login_host: localhost
+        login_user: mongo-root
+        login_password: "{{ mongo_root_pass }}"
+        login_database: admin
+        db: linode
+        eval: "db.getMongo().setReadPref('secondary'); db.replication.findOne().status"
+      run_once: true
+      delegate_to: "{{ item.host }}"
+      loop:
+        - { host: "{{ groups['mongodb'][1] }}" }
+        - { host: "{{ groups['mongodb'][2] }}" }
+      register: replication_info
+  
+    - name: verify replication data in secondary nodes
+      assert:
+        that:
+          - "{{ item.replication_status }}"
+      run_once: true      
+      delegate_to: "{{ groups['mongodb'][0] }}"
+      loop:
+        - { replication_status: "replication_info.results.0.transformed_output[0] == 'ok'" }
+        - { replication_status: "replication_info.results.1.transformed_output[0] == 'ok'" }
+
+    - name: cleanin up
+      community.mongodb.mongodb_shell:
+        login_host: localhost
+        login_user: mongo-root
+        login_password: "{{ mongo_root_pass }}"
+        login_database: admin
+        transform: raw
+        db: linode
+        eval: 'db.dropDatabase()'
+      run_once: true
+      delegate_to: "{{ groups['mongodb'][0] }}"
