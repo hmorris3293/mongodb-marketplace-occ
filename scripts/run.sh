@@ -20,7 +20,7 @@ readonly VARS_PATH="./group_vars/mongodb/vars"
 # utility functions
 function destroy {
   if [ -n "${DISTRO}" ] && [ -n "${DATE}" ]; then
-    ansible-playbook -i hosts destroy.yml --extra-vars "instance_prefix=${DISTRO}_${DATE}"
+    ansible-playbook -i hosts destroy.yml --extra-vars "instance_prefix=${DISTRO}-${DATE}"
   else
     ansible-playbook -i hosts destroy.yml
   fi
