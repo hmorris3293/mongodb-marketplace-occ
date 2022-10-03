@@ -134,8 +134,8 @@ EOF
 
 function test:deploy {
   export DISTRO="${1}"
-  export DATE="$(date '+%Y-%m-%d_%H%M%S')"
-  ansible-playbook provision.yml --extra-vars "ssh_keys=${HOME}/.ssh/id_ansible_ed25519.pub image=linode/${DISTRO}"
+  export DATE="$(date '+%Y-%m-%d-%H%M%S')"
+  ansible-playbook provision.yml --extra-vars "ssh_keys=${HOME}/.ssh/id_ansible_ed25519.pub instance_prefix=${DISTRO}-${DATE} image=linode/${DISTRO}"
   ansible-playbook -vvv -i hosts site.yml --extra-vars "root_password=${ROOT_PASS}  add_keys_prompt=yes"
   verify
 }
