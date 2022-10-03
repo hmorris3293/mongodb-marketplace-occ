@@ -53,9 +53,9 @@
       marker: "# {mark} INSTANCE VARS"
       block: |
         # hostnames 
-        mongo1_hostname: {{ mongo1_hostname }}
-        mongo2_hostname: {{ mongo2_hostname }}
-        mongo3_hostname: {{ mongo3_hostname }}
+        mongo1_hostname: {{ mongo1_hostname | replace('_', '-') }}
+        mongo2_hostname: {{ mongo2_hostname | replace('_', '-') }}
+        mongo3_hostname: {{ mongo3_hostname | replace('_', '-') }}
         # public ips
         mongo1_ip1: {{ mongo1_ip1 }}
         mongo2_ip1: {{ mongo2_ip1 }}
