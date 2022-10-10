@@ -13,7 +13,7 @@
     line: IndividualCalls=yes
 
 - name: restarting firewalld on servers
-  service:
+  ansible.builtin.systemd:
     name: firewalld
     state: restarted
 
@@ -32,6 +32,9 @@
   template:
     src: internal.xml.j2
     dest: /etc/firewalld/zones/internal.xml
+    owner: root
+    group: root
+    mode: 0640      
   run_once: true  
   delegate_to: "{{ groups['mongodb'][0] }}"
 
@@ -55,6 +58,9 @@
   template:
     src: internal.xml.j2
     dest: /etc/firewalld/zones/internal.xml
+    owner: root
+    group: root
+    mode: 0640      
   run_once: true  
   delegate_to: "{{ groups['mongodb'][1] }}"
 
@@ -78,6 +84,9 @@
   template:
     src: internal.xml.j2
     dest: /etc/firewalld/zones/internal.xml
+    owner: root
+    group: root
+    mode: 0640      
   run_once: true  
   delegate_to: "{{ groups['mongodb'][2] }}"
 

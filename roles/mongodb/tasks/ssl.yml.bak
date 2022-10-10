@@ -4,14 +4,6 @@
 
 #ca certificate
 
-- name: create directory for ssl files
-  file:
-    path: /etc/ssl/mongodb
-    state: directory
-    owner: mongodb
-    group: mongodb
-    mode: '0755'
-
 - name: generate ca passphrase
   set_fact:
     ca_password: "{{ lookup('password', '/dev/null length=25 chars=ascii_letters,digits,punctuation') }}"
@@ -48,32 +40,26 @@
   delegate_to: "{{ groups['mongodb'][0] }}"
 
 - name: generate ca crt
-  community.crypto.x509_certificate:
-    path: /etc/ssl/mongodb/mongodb-ca-crt.pem
+  community.crypto.x509_certificate_pipe:
     privatekey_content: '{{ ca_key.privatekey }}'
     privatekey_passphrase: '{{ ca_password }}'
     csr_content: '{{ ca_csr.csr }}'
-    selfsigned_not_after: +3650d
     provider: selfsigned
-    owner: mongodb
-    group: mongodb
-    mode: '0640'
+  register: ca_crt
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
 
 #server certitificate
 
 - name: generate server key
-  community.crypto.openssl_privatekey:
-    path: /etc/ssl/mongodb/mongodb-server-key.pem
-    return_content: yes
-    owner: mongodb
-    group: mongodb
-    mode: '0640'
-  no_log: true
+  community.crypto.openssl_privatekey_pipe:
   register: server_key
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
 
 - name: generate server csr
   community.crypto.openssl_csr_pipe:
-    privatekey_path: /etc/ssl/mongodb/mongodb-server-key.pem
+    privatekey_content: '{{ server_key.privatekey }}'
     country_name: '{{ country_name }}'
     state_or_province_name: '{{ state_or_province_name }}'
     locality_name: '{{ locality_name }}'
@@ -82,50 +68,67 @@
     common_name: '{{ common_name }}'
     use_common_name_for_san: false
   register: server_csr
-
-- name: generate server cert signed with ca cert
-  community.crypto.x509_certificate:
-    path: /etc/ssl/mongodb/mongodb-server-crt.pem
-    return_content: yes
-    privatekey_path: /etc/ssl/mongodb/mongodb-server-key.pem
-    csr_content: '{{ server_csr.csr }}'
-    ownca_path: /etc/ssl/mongodb/mongodb-ca-crt.pem
-    ownca_privatekey_content: '{{ ca_key.privatekey }}'
-    ownca_privatekey_passphrase: '{{ ca_password }}'
-    ownca_not_after: +3650d
-    provider: ownca
-    owner: mongodb
-    group: mongodb
-    mode: '0640'
-  register: server_crt
-
-- name: generate mongo security keyFile
-  set_fact:
-    keyfile: "{{ lookup('password', '/dev/null length=1024 chars=ascii_letters') }}"
   run_once: true
   delegate_to: "{{ groups['mongodb'][0] }}"
 
-- name: copy keyFile to nodes
-  copy:
-    dest: '/etc/ssl/mongodb/keyFile'
-    content: '{{ keyfile }}'
+- name: generate server cert signed with ca cert
+  community.crypto.x509_certificate_pipe:
+    privatekey_content: '{{ server_key.privatekey }}'
+    csr_content: '{{ server_csr.csr }}'
+    ownca_content: '{{ ca_crt.certificate }}'
+    ownca_privatekey_content: '{{ ca_key.privatekey }}'
+    ownca_privatekey_passphrase: '{{ ca_password }}'
+    provider: ownca
+  register: server_crt
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+- name: generate mongo security keyFile
+  set_fact:
+    keyFile: "{{ lookup('password', '/dev/null length=1024 chars=ascii_letters') }}"
+  run_once: true
+  delegate_to: "{{ groups['mongodb'][0] }}"
+
+ # move ceritificate files
+
+- name: create directory for ssl files
+  file:
+    path: /etc/ssl/mongodb
+    state: directory
     owner: mongodb
     group: mongodb
-    mode: '0600'
-  no_log: true
+    mode: '0755'
+    
+- name: copy ssl files to nodes
+  copy:
+    dest: '{{ item.dest }}'
+    content: '{{ item.src }}'
+    owner: mongodb
+    group: mongodb
+    mode: '0640'
+  loop:
+    - { src: '{{ ca_crt.certificate }}', dest: /etc/ssl/mongodb/mongodb-ca-crt.pem }
+    - { src: '{{ server_crt.certificate }}', dest: /etc/ssl/mongodb/mongodb-server-crt.pem }
+    - { src: '{{ server_key.privatekey }}', dest: /etc/ssl/mongodb/mongodb-server-key.pem }
+    - { src: '{{ keyFile }}', dest: /etc/ssl/mongodb/keyFile }  
+  no_log: true 
 
-- name: create mongo pem file
+- name:  updating permissions for keyFile
+  file:
+    path: /etc/ssl/mongodb/keyFile
+    mode: '0600'
+
+- name: copy over pem file
   blockinfile:
     owner: mongodb
     group: mongodb
     mode: '0640'
     path: /etc/ssl/mongodb/mongodb-server-pem.pem
     create: yes
-    marker: ""  
     block: |
       {{ server_key.privatekey }}
       {{ server_crt.certificate }}
-      
+
 - name: clear varibles
   set_fact:
     ca_crt: ''

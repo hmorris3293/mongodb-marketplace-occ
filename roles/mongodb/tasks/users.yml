@@ -2,7 +2,7 @@
 # roles/mongodb/tasks/users.yml
 
 - name: starting mongod on mongo1
-  service:
+  ansible.builtin.systemd:
     name: mongod
     state: started
   run_once: true
@@ -29,7 +29,7 @@
   delegate_to: "{{ groups['mongodb'][0] }}"
  
 - name: stopping mongod on mongo1
-  service:
+  ansible.builtin.systemd:
     name: mongod
     state: stopped
   run_once: true

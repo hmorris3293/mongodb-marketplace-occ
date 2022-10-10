@@ -67,7 +67,7 @@
   delegate_to: "{{ groups['mongodb'][2] }}"
 
 - name: starting mongod in cluster
-  service:
+  ansible.builtin.systemd:
     name: mongod
     state: started
     enabled: yes

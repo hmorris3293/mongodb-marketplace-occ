@@ -5,6 +5,9 @@
   blockinfile:
     path: /root/.deployment-secrets.yml
     create: yes
+    owner: root
+    group: root
+    mode: 0640      
     block: |
       # mongodb users
       
