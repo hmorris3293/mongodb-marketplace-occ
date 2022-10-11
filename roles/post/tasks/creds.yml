@@ -3,10 +3,10 @@
 
 - name: writing deployment credentials locally
   blockinfile:
-    path: /root/.deployment-secrets.txt
+    path: "/root/{{ sudo_username }}/.deployment-secrets.txt"
     create: yes
-    owner: root
-    group: root
+    owner: "{{ sudo_username }}"
+    group: "{{ sudo_username }}"
     mode: 0644 
     block: |
       # mongodb users

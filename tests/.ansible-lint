@@ -4,6 +4,3 @@ skip_list:
   - no-changed-when
   - no-jinja-when
   - fqcn-builtins
-#  - package-latest
-#  - risky-file-permissions
-#  - var-naming
