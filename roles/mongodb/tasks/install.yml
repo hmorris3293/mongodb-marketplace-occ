@@ -36,7 +36,7 @@
 
 - name: adding mongodb repository
   apt_repository:
-    repo: deb http://repo.mongodb.org/apt/debian buster/mongodb-org/5.0 main
+    repo: deb http://repo.mongodb.org/apt/debian bullseye/mongodb-org/5.0 main
     filename: mongodb-org-5.0
     state: present
 

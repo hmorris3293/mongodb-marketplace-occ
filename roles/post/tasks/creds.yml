@@ -3,11 +3,11 @@
 
 - name: writing deployment credentials locally
   blockinfile:
-    path: /root/.deployment-secrets.yml
+    path: /root/.deployment-secrets.txt
     create: yes
     owner: root
     group: root
-    mode: 0640      
+    mode: 0644 
     block: |
       # mongodb users
       
