@@ -3,7 +3,7 @@
 
 - name: writing deployment credentials locally
   blockinfile:
-    path: "/{{ sudo_username }}/.deployment-secrets.txt"
+    path: "/home/{{ sudo_username }}/.deployment-secrets.txt"
     create: yes
     owner: "{{ sudo_username }}"
     group: "{{ sudo_username }}"
