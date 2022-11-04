@@ -13,7 +13,7 @@ Deploy a High Availability MongoDB replica set cluster consisting of 3 members.
 
 ## Documentation
 Deployment guide:
-- [Deploying a MongoDB replica throught the Linode Marketplace]()
+- [Deploying a MongoDB replica throught the Linode Marketplace](https://www.linode.com/docs/) (Coming Soon...)
 
 Additonal resources:
 - [MongoDB replica set](https://www.mongodb.com/docs/manual/replication/)
