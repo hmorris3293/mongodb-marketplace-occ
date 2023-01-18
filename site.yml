@@ -2,7 +2,7 @@
 
 # linodes
 - name: configure Mongodb linodes
-  hosts: mongodb
+  hosts: all
   any_errors_fatal: true
   user: root
   vars:
