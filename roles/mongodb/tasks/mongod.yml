@@ -18,7 +18,7 @@
   set_fact:
     private_ip: "{{ mongo1_priv1 }}" 
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
  
 - name: updating mongod.conf on mongo1
   template:
@@ -28,7 +28,7 @@
     group: mongodb
     mode: '0644'
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 # mongo2
 
@@ -36,7 +36,7 @@
   set_fact:
     private_ip: "{{ mongo2_priv1 }}" 
   run_once: true
-  delegate_to: "{{ groups['mongodb'][1] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][0] }}"
  
 - name: updating mongod.conf on mongo2
   template:
@@ -46,7 +46,7 @@
     group: mongodb
     mode: '0644'
   run_once: true
-  delegate_to: "{{ groups['mongodb'][1] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][0] }}"
 
 #mongo3
 
@@ -54,7 +54,7 @@
   set_fact:
     private_ip: "{{ mongo3_priv1 }}" 
   run_once: true
-  delegate_to: "{{ groups['mongodb'][2] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][1] }}"
  
 - name: updating mongod.conf on mongo3
   template:
@@ -64,7 +64,7 @@
     group: mongodb
     mode: '0644'
   run_once: true
-  delegate_to: "{{ groups['mongodb'][2] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][1] }}"
 
 - name: starting mongod in cluster
   ansible.builtin.systemd:

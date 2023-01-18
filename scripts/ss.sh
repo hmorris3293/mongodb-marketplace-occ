@@ -34,7 +34,7 @@ function cleanup {
     if [ -d "/usr/local/bin/run" ]; then
       rm /usr/local/bin/run
     fi
-    stackscript_cleanup && destroy_linode
+    stackscript_cleanup
   fi
 }
 function destroy_linode {
@@ -45,7 +45,7 @@ function destroy_linode {
 function setup {
   # install dependancies
   apt-get update
-  apt-get install -y jq git python3 python3-pip python3-dev build-essential
+  apt-get install -y jq git python3 python3-pip python3-dev build-essential firewalld
   # write authorized_keys file
   if [ "${ADD_SSH_KEYS}" == "yes" ]; then
     curl -sH "Content-Type: application/json" -H "Authorization: Bearer ${TOKEN_PASSWORD}" https://api.linode.com/v4/profile/sshkeys | jq -r .data[].ssh_key > /root/.ssh/authorized_keys

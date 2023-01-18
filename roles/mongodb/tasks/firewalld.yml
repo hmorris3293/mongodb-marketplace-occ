@@ -26,7 +26,7 @@
     mongodb2: "{{ mongo2_priv1 }}"
     mongodb3: "{{ mongo3_priv1 }}"
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: installing internal.xml for mongo1
   template:
@@ -36,12 +36,12 @@
     group: root
     mode: '0644'
   run_once: true  
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: reloading firewalld on mongo1
   shell: firewall-cmd --reload
   run_once: true  
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 # mongodb 2
 
@@ -52,7 +52,7 @@
     mongodb2: "{{ mongo1_priv1 }}"
     mongodb3: "{{ mongo3_priv1 }}"
   run_once: true
-  delegate_to: "{{ groups['mongodb'][1] }}"  
+  delegate_to: "{{ groups['mongodb_secondary'][0] }}"  
 
 - name: installing internal.xml for mongo2
   template:
@@ -62,12 +62,12 @@
     group: root
     mode: '0644'     
   run_once: true  
-  delegate_to: "{{ groups['mongodb'][1] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][0] }}"
 
 - name: reloading firewalld on mongo2
   shell: firewall-cmd --reload
   run_once: true  
-  delegate_to: "{{ groups['mongodb'][1] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][0] }}"
 
 # mongodb 3
 
@@ -78,7 +78,7 @@
     mongodb2: "{{ mongo1_priv1 }}"
     mongodb3: "{{ mongo2_priv1 }}"
   run_once: true
-  delegate_to: "{{ groups['mongodb'][2] }}"  
+  delegate_to: "{{ groups['mongodb_secondary'][1] }}"  
 
 - name: installing internal.xml for mongo3
   template:
@@ -88,9 +88,9 @@
     group: root
     mode: '0644' 
   run_once: true  
-  delegate_to: "{{ groups['mongodb'][2] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][1] }}"
 
 - name: reloading firewalld on mongo3
   shell: firewall-cmd --reload
   run_once: true  
-  delegate_to: "{{ groups['mongodb'][2] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][1] }}"

@@ -16,7 +16,7 @@
   set_fact:
     ca_password: "{{ lookup('password', '/dev/null length=25 chars=ascii_letters,digits,punctuation') }}"
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: generate ca key
   community.crypto.openssl_privatekey_pipe:
@@ -24,7 +24,7 @@
     cipher: auto
   register: ca_key
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: generate ca csr
   community.crypto.openssl_csr_pipe:
@@ -45,7 +45,7 @@
     key_usage_critical: true
   register: ca_csr
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: generate ca crt
   community.crypto.x509_certificate:
@@ -103,7 +103,7 @@
   set_fact:
     keyfile: "{{ lookup('password', '/dev/null length=1024 chars=ascii_letters') }}"
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: copy keyFile to nodes
   copy:
@@ -135,4 +135,4 @@
     server_csr: ''
     server_key: ''
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"

@@ -9,7 +9,7 @@
     host: 'localhost'
     delay: 10
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: initiating replica rs0
   community.mongodb.mongodb_shell:
@@ -19,7 +19,7 @@
     login_database: admin
     eval: 'rs.initiate({ _id: "rs0", version: 1, members: [{ _id: 0, host : "{{ mongo1_hostname  }}:27017" }, { _id: 1, host : "{{ mongo2_hostname }}:27017" },{ _id: 2, host : "{{ mongo3_hostname }}:27017" }]})'
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: waiting for replicaset to stabilize
   community.mongodb.mongodb_status:
@@ -33,7 +33,7 @@
     login_database: admin
     strict_compatibility: no
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
       
 - name: ensuring replicaset rs0 exist
   community.mongodb.mongodb_replicaset:
@@ -47,4 +47,4 @@
     - host: "{{ mongo2_hostname }}:27017"
     - host: "{{ mongo3_hostname }}:27017"
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
