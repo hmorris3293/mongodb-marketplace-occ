@@ -42,6 +42,21 @@ function destroy_linode {
     -X DELETE \
     https://api.linode.com/v4/linode/instances/${LINODE_ID}
 }
+function addip {
+  curl -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${TOKEN_PASSWORD}" \
+    -X POST -d '{
+      "type": "ipv4",
+      "public": false
+      }' \
+      https://api.linode.com/v4/linode/instances/${LINODE_ID}/ips
+}
+function getip {
+  curl -s -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${TOKEN_PASSWORD}" \
+    https://api.linode.com/v4/linode/instances/${LINODE_ID}/ips | \
+    jq -r '.ipv4.private[].address'
+}
 function setup {
   # install dependancies
   apt-get update
@@ -50,6 +65,11 @@ function setup {
   if [ "${ADD_SSH_KEYS}" == "yes" ]; then
     curl -sH "Content-Type: application/json" -H "Authorization: Bearer ${TOKEN_PASSWORD}" https://api.linode.com/v4/profile/sshkeys | jq -r .data[].ssh_key > /root/.ssh/authorized_keys
   fi
+  # add Private IP 
+  addip
+  LINODE_IP=$(getip)
+  # add private IP address
+  ip addr add ${LINODE_IP}/17 dev eth0 label eth0:1
   # clone repo and set up ansible environment
   git clone ${GIT_REPO} /tmp/mongodb-cluster
   cd /tmp/mongodb-cluster
