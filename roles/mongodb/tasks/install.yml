@@ -6,19 +6,19 @@
   hostname:
     name: "{{ mongo1_hostname }}"
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: set mongo2 hostname
   hostname:
     name: "{{ mongo2_hostname }}"
   run_once: true
-  delegate_to: "{{ groups['mongodb'][1] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][0] }}"
 
 - name: set mongo3 hostname
   hostname:
     name: "{{ mongo3_hostname }}"
   run_once: true
-  delegate_to: "{{ groups['mongodb'][2] }}"
+  delegate_to: "{{ groups['mongodb_secondary'][1] }}"
 
 - name: update /etc/hosts
   blockinfile:

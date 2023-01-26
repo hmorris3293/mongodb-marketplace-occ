@@ -6,7 +6,7 @@
       - group_vars/mongodb/secret_vars
   
   vars:
-    count: 3
+    count: 2
        
   tasks:
   - name: creating mongodb cluster
@@ -33,21 +33,24 @@
     register: info
     with_sequence: count='{{count}}'
 
+  - name: set facts for mongo1
+    set_fact: 
+      mongo1_hostname: '{{ instance_prefix }}0.{{ cluster_name }}'
+      mongo1_ip1: '{{ ansible_all_ipv4_addresses[0] }}' 
+      mongo1_priv1: '{{ ansible_all_ipv4_addresses[1] }}'
+
   # new
   - name: set facts
     set_fact:
       # hostnames
-      mongo1_hostname: '{{ info.results.0.instance.label }}.{{ cluster_name }}'
-      mongo2_hostname: '{{ info.results.1.instance.label }}.{{ cluster_name }}'
-      mongo3_hostname: '{{ info.results.2.instance.label }}.{{ cluster_name }}'
+      mongo2_hostname: '{{ info.results.0.instance.label }}.{{ cluster_name }}'
+      mongo3_hostname: '{{ info.results.1.instance.label }}.{{ cluster_name }}'
       # public ips
-      mongo1_ip1: '{{ info.results.0.instance.ipv4[0] }}'
-      mongo2_ip1: '{{ info.results.1.instance.ipv4[0] }}'
-      mongo3_ip1: '{{ info.results.2.instance.ipv4[0] }}'
+      mongo2_ip1: '{{ info.results.0.instance.ipv4[0] }}'
+      mongo3_ip1: '{{ info.results.1.instance.ipv4[0] }}'
       # private ips
-      mongo1_priv1: '{{ info.results.0.instance.ipv4[1] }}'
-      mongo2_priv1: '{{ info.results.1.instance.ipv4[1] }}'
-      mongo3_priv1: '{{ info.results.2.instance.ipv4[1] }}'
+      mongo2_priv1: '{{ info.results.0.instance.ipv4[1] }}'
+      mongo3_priv1: '{{ info.results.1.instance.ipv4[1] }}'
 
   - name: update group_vars
     blockinfile:
@@ -79,19 +82,26 @@
       path: ./hosts
       marker: "# {mark} MONGODB LINODES"
       block: |
-        [mongodb]
-        {{ mongo1_ip1 }}
+        [mongodb_primary]
+        localhost ansible_connection=local user=root
+        [mongodb_secondary]
         {{ mongo2_ip1 }}
         {{ mongo3_ip1 }}
 
-  - name: update in-memory inventory
+  - name: update in-memory inventory local
     add_host:
       name: '{{ item }}'
-      groups: mongodb
+      groups: mongodb_primary
     with_items:
       - '{{ mongo1_ip1 }}'
+
+  - name: update in-memory inventory remote 
+    add_host: 
+      name: '{{ item }}'
+      groups: mongodb_secondary
+    with_items: 
       - '{{ mongo2_ip1 }}'
-      - '{{ mongo3_ip1 }}'
+      - '{{ mongo3_ip1 }}'  
 
   - name: wait for port 22 to become open
     wait_for:

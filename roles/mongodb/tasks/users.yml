@@ -6,7 +6,7 @@
     name: mongod
     state: started
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: creating mongo admin user
   community.mongodb.mongodb_user:
@@ -16,7 +16,7 @@
     roles: userAdminAnyDatabase
     state: present
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
 
 - name: creating mongo root user
   community.mongodb.mongodb_user:
@@ -26,11 +26,11 @@
     roles: root 
     state: present
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
  
 - name: stopping mongod on mongo1
   ansible.builtin.systemd:
     name: mongod
     state: stopped
   run_once: true
-  delegate_to: "{{ groups['mongodb'][0] }}"
+  delegate_to: "{{ groups['mongodb_primary'][0] }}"
