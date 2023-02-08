@@ -27,5 +27,5 @@ jobs:
 
       - name: push to public mirror
         run: |
-          git push --mirror https://github.com/linode-solutions/mongodb-marketplace-occ.git
+          git push --mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
 
