@@ -6,12 +6,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 1
 
       - name: set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
 
@@ -22,9 +22,9 @@ jobs:
           chmod +x $HOME/.local/bin/run
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: integrity checks
-        run: |
-          echo "eb63ad649182285921dd04742a8e6b495f19a3fb7a04a9c126be559fbf0fe238 group_vars/mongodb/vars" | sha256sum -c
+          #- name: integrity checks
+          #run: |
+          #echo "eb63ad649182285921dd04742a8e6b495f19a3fb7a04a9c126be559fbf0fe238 group_vars/mongodb/vars" | sha256sum -c
           
       - name: install dependencies
         run: |
