@@ -14,6 +14,17 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: set up ssh
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > $HOME/.ssh/id_github_mirror_ed25519
+          chmod 600 $HOME/.ssh/id_github_mirror_ed25519
+          chmod 700 ~/.ssh
+          eval $(ssh-agent)
+          ssh-add $HOME/.ssh/id_github_mirror_ed25519
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.MIRROR_SSH_PRIV_KEY }}
+
       - name: push to public mirror
         run: |
           git push --mirror https://github.com/linode-solutions/mongodb-marketplace-occ.git
