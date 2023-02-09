@@ -38,5 +38,9 @@ jobs:
           ##git remote add mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
           ##git push -u mirror main
           #git remote add mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
-          git push --mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
+          ##git push --mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
+          git remote remove origin
+          git init
+          git remote add mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
+          git push mirror main
 
