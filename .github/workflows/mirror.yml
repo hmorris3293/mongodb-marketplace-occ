@@ -36,9 +36,11 @@ jobs:
           #git commit -m "initial commit"
           #git rebase --onto temp_branch $START_COMMIT main
           ##git remote add mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
-          ##git push -u mirror main
+          ##git push -u mirror main##
           #git remote add mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
-          ##git push --mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
+          ##git push --mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git##
+          ####
+          rm -rf .github
           git remote remove origin
           git init
           git remote add mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
