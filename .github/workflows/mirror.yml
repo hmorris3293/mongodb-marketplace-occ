@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 0 # changed from 1
 
       - name: set up ssh
         run: |
@@ -29,5 +29,14 @@ jobs:
       - name: push to public mirror
         run: |
           ls -la
-          git push --mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
+          git remote remove origin
+          LAST_COMMIT=$(git rev-list main | head -n 1)
+          git checkout $LAST_COMMIT
+          git checkout --orphan temp_branch
+          git commit -m "initial commit"
+          git rebase --onto temp_branch $START_COMMIT main
+          git remote add mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
+          git push -u mirror main
+          #git remote add mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
+          #git push --mirror git@github.com:linode-solutions/mongodb-marketplace-occ.git
 
