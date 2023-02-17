@@ -31,13 +31,13 @@
  
 - name: importing signing key
   apt_key:
-    url: https://www.mongodb.org/static/pgp/server-5.0.asc 
+    url: https://www.mongodb.org/static/pgp/server-6.0.asc 
     state: present
 
 - name: adding mongodb repository
   apt_repository:
-    repo: deb http://repo.mongodb.org/apt/debian bullseye/mongodb-org/5.0 main
-    filename: mongodb-org-5.0
+    repo: deb http://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse
+    filename: mongodb-org-6.0
     state: present
 
 - name: updating repos
